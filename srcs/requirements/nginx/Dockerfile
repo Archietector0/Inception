@@ -1,13 +1,31 @@
+# Установка ОС
 FROM	debian:buster
 
-RUN		apt-get update -y && apt-get upgrade -y && \
-		apt-get -y install nginx openssl vim curl
+# Установка nginx, openssl, vim
+RUN		apt-get update -y && apt-get upgrade -y &&	\ 
+		apt-get -y install							\
+		nginx										\
+		openssl										\
+		vim
 
-RUN		openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-		-keyout /etc/ssl/private/server_pkey.pem \
-		-out /etc/ssl/certs/server.crt \
+
+RUN		rm -rf ./etc/nginx/sites-available/default
+RUN		rm -rf ./etc/nginx/sites-enabled/default
+
+# Перенос конфига в контейнер
+COPY	/nginx.conf ./etc/nginx/sites-available
+RUN 	ln -s /etc/nginx/sites-available/nginx.conf /etc/nginx/sites-enabled/nginx.conf
+
+# Создание папок для хранения ключей и сертификатов
+RUN		mkdir /etc/nginx/ssl
+RUN		mkdir /etc/nginx/ssl/certs
+RUN		mkdir /etc/nginx/ssl/private
+
+# Выпуск сертификатов
+RUN		openssl req -x509 -nodes -days 365 -newkey rsa:2048	\
+		-keyout /etc/nginx/ssl/private/tbarth.key 				\
+		-out /etc/nginx/ssl/certs/tbarth.crt					\
 		-subj "/C=RU/ST=Kazan/L=Kazan/O=21/OU=tbarth/CN=localhost"
 
-COPY	./default /etc/nginx/sites-available/default
 
 CMD		["nginx","-g", "daemon off;"]
