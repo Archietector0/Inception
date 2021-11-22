@@ -1,13 +1,14 @@
-FROM	debian:buster
 
-RUN		apt-get update -y &&	\
-		apt-get upgrade -y &&	\
-		apt-get -y install mariadb-server
+FROM debian:buster
 
-COPY	./tools/my.cnf /etc/mysql/my.cnf
-COPY	./tools/setup.sh /var/www/
-RUN		chmod +x /var/www/setup.sh
+# updating packages
+RUN apt-get update
 
-EXPOSE	3306
+# software installation
+RUN apt-get install -y mariadb-server
 
-CMD 	["/var/www/setup.sh", "mysqld"]
+# copying mysql client commands
+COPY /tools/db.sql /etc/mysql/
+COPY /tools/setup.sh /
+
+CMD bash setup.sh

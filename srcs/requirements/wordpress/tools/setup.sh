@@ -1,21 +1,30 @@
 #!/bin/bash
 
-if [ ! -f /var/www/html/wp-config.php ]; then
-# wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
-# chmod +x wp-cli.phar
-# mv wp-cli.phar /usr/local/bin/wp
-cd var/www/html/wordpress
-wp core download --allow-root
-mv /var/www/html/wordpress/wp-config.php /var/www/html/
-wp core install --allow-root							\
-				--url=${WP_URL}							\
-				--title=${WP_TITLE}						\
-				--admin_user=${WP_ADM_USER}				\
-				--admin_password=${WP_ADM_PASS}			\
-				--admin_email=${WP_ADM_MAIL}
-wp user create --allow-root ${WP_USER} ${WP_USER_MAIL}	\
-				--role=subscriber						\
-				--user_pass=${WP_USER_PASS}
+if [ ! -f /var/www/wordpress/wp-config.php ]
+then
+wp config create	--allow-root \
+					--skip-check \
+					--dbname=$DB_NAME \
+					--dbuser=$DB_USER \
+					--dbpass=$DB_PASSWORD \
+					--dbhost=$DB_HOST \
+					--dbprefix=wp_ \
+					--path=/var/www/html/wordpress
+sleep 10
 fi
 
-exec "$@"
+wp core install		--allow-root \
+					--url=$WP_URL \
+					--title=my_site \
+					--admin_user=$WP_ADMIN \
+					--admin_password=$WP_ADMIN_PASSWORD \
+					--admin_email=$WP_ADMIN_EMAIL \
+					--path=/var/www/html/wordpress
+
+wp user create user	"$WP_REG_USER@$WP_URL" \
+					--allow-root \
+					--role=author \
+					--user_pass=$WP_REG_USER_PASSWORD \
+					--path=/var/www/html/wordpress
+
+/usr/sbin/php-fpm7.3 -F --nodaemonize

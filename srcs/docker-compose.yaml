@@ -1,3 +1,4 @@
+
 version: '3.3'
 
 volumes:
@@ -6,13 +7,13 @@ volumes:
     driver_opts:
       type: none
       o: bind 
-      device: /Users/natalaviktorovna/Desktop/QQQ/wp
+      device: /home/archie/Desktop/Data/wp
   db:
     driver: local
     driver_opts:
       type: none
       o: bind 
-      device: /Users/natalaviktorovna/Desktop/QQQ/db
+      device: /home/archie/Desktop/Data/db
 
 networks:
   my-net:

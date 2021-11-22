@@ -1,5 +1,13 @@
 127.0.0.1       tbarth.42.fr localhost
-::1     ip6-localhost ip6-tbarth.42.fr ip6-loopback
+127.0.1.1       laptop
+
+
+92.168.1.10     manager
+192.168.1.11    worker-01
+192.168.1.12    worker-02
+
+# The following lines are desirable for IPv6 capable hosts
+::1     ip6-localhost ip6-loopback
 fe00::0 ip6-localnet
 ff00::0 ip6-mcastprefix
 ff02::1 ip6-allnodes

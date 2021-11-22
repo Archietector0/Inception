@@ -1,19 +1,19 @@
 #!/bin/bash
 
-if [ ! -d /var/lib/mysql/wordpress/ ]; then
+# editing ports in config
+sed -ie 's/127.0.0.1/0.0.0.0/g' /etc/mysql/mariadb.conf.d/50-server.cnf
+sed -ie 's/#port/port/g' /etc/mysql/mariadb.conf.d/50-server.cnf
+
+# starting mysql and creating database if it doesn't exist
+if [ ! -d /var/lib/mysql/DB ]
+then
 service mysql start
-echo "CREATE DATABASE IF NOT EXISTS $MYSQL_DATABASE;"| mysql -u root
-echo "CREATE USER IF NOT EXISTS '$MYSQL_USER'@'%' IDENTIFIED BY '$MYSQL_PASSWORD';"| mysql -u root
-echo "GRANT ALL PRIVILEGES ON wordpress.* TO '$MYSQL_USER'@'%' WITH GRANT OPTION;"| mysql -u root
-echo "FLUSH PRIVILEGES;"| mysql -u root
-mysqladmin -u root password $MARIADB_ROOT_PASSWORD
+apt-get install -y gettext-base
+envsubst < /etc//mysql/db.sql | mysql
+mysqladmin -u root password $DB_ROOT_PASSWORD
 service mysql stop
-else
-mkdir /var/run/mysqld
-mkfifo var/run/mysqld/mysqld.sock
-touch /var/run/mysqld/mysqld.pid
-chown -R mysql /var/run/mysqld
 fi
 chown -R mysql:mysql /var/lib/mysql
 
-exec "$@"
+# running mysql in background
+mysqld_safe
